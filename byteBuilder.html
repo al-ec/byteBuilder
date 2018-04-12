@@ -1,0 +1,539 @@
+
+<script>
+    // alec armbruster
+    // 2018, april, 12, 1:01am
+
+    // defaults upon loading
+    var userModel = 1;
+    var userPhaseCurrent = 100;
+    var userRatedCurrent = 100;
+    var userHaltVoltage = 100;
+    var userTolerance = 100;
+    var userLimitSpeed = 38;
+    var userSpeedMode = 1;
+    var userSpeed1 = 24;
+    var userSpeed2 = 24;
+    var userSpeed3 = 24;
+    var userSpeed4 = 24;
+    var userBlockTime = 10;
+    var userAutoCruisingTime = 10;
+    var userSlipChargeMode = 1;
+    var userIndicateMode = 1;
+    var userEBSLevel = 4;
+    var userConverseSpeed = 38;
+    var userEBSLimVoltage = 0;
+    var userGuardLevel = 0;
+    var userBarProtect = 0;
+    var userPedalAssistSensor = 0;
+    var userp3Design = 0;
+    var userHallAngle = 1;
+    var userDefaultSpeed = 1;
+    var userPedalAssistMaxSpeed = 30;
+    var userFluxWeaken = 191;
+    var userFluxFineTune = 255;
+    var userWeakPosition = 40;
+    var userWeakTurnPoint = 255;
+    var userRegenBrakeEnable = 0;
+    var userSoftStartEnable = 0;
+    var userSoftLVCDisable = 0;
+    var userSoftLVCSpeed1 = 0;
+    var userSoftLVCSpeed2 = 0;
+    var userSoftLVCSpeed3 = 0;
+    var userSoftLVCSpeed4 = 0;
+    var userCurrentPerc1 = 0;
+    var userCurrentPerc2 = 0;
+    var userCurrentPerc3 = 0;
+    var userCurrentPerc4 = 0;
+    var userBatteryCurrentLimit = 80;
+    var userSoftStartTime = 0;
+    var userSlowSpeedPercent = 0;
+    var userRecoverSpeedPercent = 0;
+    var userCurrentCompensation = 46;
+
+    // grabs user input
+    function formChanged() {
+        userModel = document.getElementsByName("userModel")[0].value;
+        userPhaseCurrent = document.getElementsByName("userPhaseCurrent")[0].value;
+        userRatedCurrent = document.getElementsByName("userRatedCurrent")[0].value;
+        userHaltVoltage = document.getElementsByName("userHaltVoltage")[0].value;
+        userTolerance = document.getElementsByName("userTolerance")[0].value;
+        userLimitSpeed = document.getElementsByName("userLimitSpeed")[0].value;
+        userSpeedMode = document.getElementsByName("userSpeedMode")[0].value;
+        userSpeed1 = document.getElementsByName("userSpeed1")[0].value;
+        userSpeed2 = document.getElementsByName("userSpeed2")[0].value;
+        userSpeed3 = document.getElementsByName("userSpeed3")[0].value;
+        userSpeed4 = document.getElementsByName("userSpeed4")[0].value;
+        userBlockTime = document.getElementsByName("userBlockTime")[0].value;
+        userAutoCruisingTime = document.getElementsByName("userAutoCruisingTime")[0].value;
+        userSlipChargeMode = document.getElementsByName("userSlipChargeMode")[0].value;
+        userIndicateMode = document.getElementsByName("userIndicateMode")[0].value;
+        userEBSLevel = document.getElementsByName("userEBSLevel")[0].value;
+        userConverseSpeed = document.getElementsByName("userConverseSpeed")[0].value;
+        userEBSLimVoltage = document.getElementsByName("userEBSLimVoltage")[0].value;
+        userGuardLevel = document.getElementsByName("userGuardLevel")[0].value;
+        userBarProtect = document.getElementsByName("userBarProtect")[0].value;
+        userPedalAssistSensor = document.getElementsByName("userPedalAssistSensor")[0].value;
+        userp3Design = document.getElementsByName("userp3Design")[0].value;
+        userHallAngle = document.getElementsByName("userHallAngle")[0].value;
+        userDefaultSpeed = document.getElementsByName("userDefaultSpeed")[0].value;
+        userLimitCruise = document.getElementsByName("userLimitCruise")[0].value;
+        userPedalAssistMaxSpeed = document.getElementsByName("userPedalAssistMaxSpeed")[0].value;
+        userFluxWeaken = document.getElementsByName("userFluxWeaken")[0].value;
+        userFluxFineTune = document.getElementsByName("userFluxFineTune")[0].value;
+        userWeakPosition = document.getElementsByName("userWeakPosition")[0].value;
+        userWeakTurnPoint = document.getElementsByName("userWeakTurnPoint")[0].value;
+        userRegenBrakeEnable = document.getElementsByName("userRegenBrakeEnable")[0].value;
+        userSoftStartEnable = document.getElementsByName("userSoftStartEnable")[0].value;
+        userSoftLVCDisable = document.getElementsByName("userSoftLVCDisable")[0].value;
+        userSoftLVCSpeed1 = document.getElementsByName("userSoftLVCSpeed1")[0].value;
+        userSoftLVCSpeed2 = document.getElementsByName("userSoftLVCSpeed2")[0].value;
+        userSoftLVCSpeed3 = document.getElementsByName("userSoftLVCSpeed3")[0].value;
+        userSoftLVCSpeed4 = document.getElementsByName("userSoftLVCSpeed4")[0].value;
+        userCurrentPerc1 = document.getElementsByName("userCurrentPerc1")[0].value;
+        userCurrentPerc2 = document.getElementsByName("userCurrentPerc2")[0].value;
+        userCurrentPerc3 = document.getElementsByName("userCurrentPerc3")[0].value;
+        userCurrentPerc4 = document.getElementsByName("userCurrentPerc4")[0].value;
+        userBatteryCurrentLimit = document.getElementsByName("userBatteryCurrentLimit")[0].value;
+        userSoftStartTime = document.getElementsByName("userSoftStartTime")[0].value;
+        userSlowSpeedPercent = document.getElementsByName("userSlowSpeedPercent")[0].value;
+        userRecoverSpeedPercent = document.getElementsByName("userRecoverSpeedPercent")[0].value;
+        userCurrentCompensation = document.getElementsByName("userCurrentCompensation")[0].value;
+        updateView();
+    }
+
+    function updateView() {
+        // 0-1 are garbage arrays
+        controllerConfig[0] = 2;
+        controllerConfig[1] = 15;
+        controllerConfig[2] = calcPhaseCurrent(userPhaseCurrent, userModel);
+        controllerConfig[3] = calcRatedCurrent(userRatedCurrent, userModel);
+        controllerConfig[4] = userHaltVoltage * 3.285;
+        controllerConfig[5] = userTolerance * 3.285;
+        controllerConfig[6] = userLimitSpeed * 0.96;
+        controllerConfig[7] = userSpeedMode;
+        controllerConfig[8] = userSpeed1 * 0.8;
+        controllerConfig[9] = userSpeed2 * 0.8;
+        controllerConfig[10] = userSpeed3 * 0.8;
+        controllerConfig[11] = userBlockTime * 10;
+        controllerConfig[12] = userAutoCruisingTime * 10;
+        controllerConfig[13] = userSlipChargeMode;
+        controllerConfig[14] = userIndicateMode;
+        controllerConfig[15] = userEBSLevel;
+        controllerConfig[16] = userConverseSpeed * 1.28;
+        controllerConfig[17] = userEBSLimVoltage * 3.285;
+        controllerConfig[18] = userGuardLevel;
+        controllerConfig[19] = userBarProtect;
+        controllerConfig[20] = userPedalAssistSensor;
+        controllerConfig[21] = userp3Design;
+        controllerConfig[22] = userDefaultSpeed;
+        controllerConfig[23] = userSpeed4 * 0.8;
+        controllerConfig[24] = userModel;
+        controllerConfig[25] = userLimitCruise;
+        controllerConfig[26] = userPedalAssistMaxSpeed * 1.28;
+        controllerConfig[27] = userFluxWeaken;
+        controllerConfig[28] = userFluxFineTune;
+        controllerConfig[29] = userWeakPosition;
+        controllerConfig[30] = userWeakTurnPoint;
+        var flag0 = 0;
+        var flag1 = 0;
+        var flag2 = 0;
+        var flag3 = 0;
+        var flag4 = userSoftLVCDisable;
+        var flag5 = userSoftStartEnable;
+        var flag6 = userRegenBrakeEnable;
+        var flag7 = userHallAngle;
+        controllerConfig[31] = createMask(flag7, flag6, flag5, flag4, flag3, flag2, flag1);
+        controllerConfig[32] = 0;
+        controllerConfig[33] = userSoftLVCSpeed1 * 0.8;
+        controllerConfig[34] = userSoftLVCSpeed2 * 0.8;
+        controllerConfig[35] = userSoftLVCSpeed3 * 0.8;
+        controllerConfig[36] = userSoftLVCSpeed4 * 0.8;
+        controllerConfig[37] = userCurrentPerc1 * 1.28;
+        controllerConfig[38] = userCurrentPerc2 * 1.28;
+        controllerConfig[39] = userCurrentPerc3 * 1.28;
+        controllerConfig[40] = userCurrentPerc4 * 1.28;
+        controllerConfig[41] = userBatteryCurrentLimit * 13.18;
+        controllerConfig[42] = userSoftStartTime;
+        controllerConfig[43] = userSlowSpeedPercent * 0.8;
+        controllerConfig[44] = userRecoverSpeedPercent * 1.28;
+        controllerConfig[45] = userCurrentCompensation;
+        // checksum on offset 63
+        controllerConfig[63] = instanceCheck();
+        x.innerHTML = controllerConfig.join(" ") + " &larr; xor checksum";
+    }
+
+    var controllerConfig = new Uint8Array(64);
+
+    function createMask() {
+        var nMask = 0,
+            nFlag = 0,
+            nLen = arguments.length > 32 ? 32 : arguments.length;
+        for (nFlag; nFlag < nLen; nMask |= arguments[nFlag] << nFlag++);
+        return nMask;
+    }
+
+    function calcPhaseCurrent(value, model) {
+        if (model == "1") {
+            return value * 2.85;
+        }
+        if (model == "2") {
+            return value * 2.46;
+        }
+        if (model == "3") {
+            return value * 1.20;
+        }
+        if (model == "4") {
+            return value * 0.79;
+        }
+        if (model == "5") {
+            return value * 0.53
+        } else {
+            return value * 1.20;
+        }
+    }
+
+    function calcRatedCurrent(value, model) {
+        if (model == "1") {
+            return value * 5.10;
+        }
+        if (model == "2") {
+            return value * 5.10;
+        }
+        if (model == "3") {
+            return value * 2.73;
+        }
+        if (model == "4") {
+            return value * 2.55;
+        }
+        if (model == "5") {
+            return value * 1.70
+        } else {
+            return value * 2.73;
+        }
+    }
+
+    function instanceCheck() {
+        return controllerConfig[0] ^
+            controllerConfig[1] ^
+            controllerConfig[2] ^
+            controllerConfig[3] ^
+            controllerConfig[4] ^
+            controllerConfig[5] ^
+            controllerConfig[6] ^
+            controllerConfig[7] ^
+            controllerConfig[8] ^
+            controllerConfig[9] ^
+            controllerConfig[10] ^
+            controllerConfig[11] ^
+            controllerConfig[12] ^
+            controllerConfig[13] ^
+            controllerConfig[14] ^
+            controllerConfig[15] ^
+            controllerConfig[16] ^
+            controllerConfig[17] ^
+            controllerConfig[18] ^
+            controllerConfig[19] ^
+            controllerConfig[20] ^
+            controllerConfig[21] ^
+            controllerConfig[22] ^
+            controllerConfig[23] ^
+            controllerConfig[24] ^
+            controllerConfig[25] ^
+            controllerConfig[26] ^
+            controllerConfig[27] ^
+            controllerConfig[28] ^
+            controllerConfig[29] ^
+            controllerConfig[30] ^
+            controllerConfig[31] ^
+            controllerConfig[32] ^
+            controllerConfig[33] ^
+            controllerConfig[34] ^
+            controllerConfig[35] ^
+            controllerConfig[36] ^
+            controllerConfig[37] ^
+            controllerConfig[38] ^
+            controllerConfig[39] ^
+            controllerConfig[40] ^
+            controllerConfig[41] ^
+            controllerConfig[42] ^
+            controllerConfig[43] ^
+            controllerConfig[44] ^
+            controllerConfig[45] ^
+            controllerConfig[46] ^
+            controllerConfig[47] ^
+            controllerConfig[48] ^
+            controllerConfig[49] ^
+            controllerConfig[50] ^
+            controllerConfig[51] ^
+            controllerConfig[52] ^
+            controllerConfig[53] ^
+            controllerConfig[54] ^
+            controllerConfig[55] ^
+            controllerConfig[56] ^
+            controllerConfig[57] ^
+            controllerConfig[58] ^
+            controllerConfig[59] ^
+            controllerConfig[60] ^
+            controllerConfig[61] ^
+            controllerConfig[62];
+    }
+</script>
+
+<html>
+<h1>kh6xx byte creator</h1>
+<h2>visualized backend, useful for testing with rs232/485 serial</h2>
+<pre># apr 12 18, launched.
+fixed bitflags (8-bit) to align properly.
+still don't fkn' know if it's right...
+byte 1 = byte 0, correct?
+is byte 7 the last byte in the 8-bit mask?
+
+# need help testing before this code gets used in the backend! :)</pre>
+<a>
+    <u>Array sent to controller via serial:</u>
+</a>
+<p id="x" style="background-color: black; color: white; overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto; padding-left: 10px; padding-top:10px; padding-bottom: 10px; height: auto;">change a setting to start generating an array!</p>
+<a>
+    <u>User settings:</u>
+</a>
+<br>
+<br>
+<a>controller model:</a>
+<select name="userModel" onkeyup="formChanged()" onchange="formChanged()">
+    <option value="1">kh606</option>
+    <option value="2">kh609</option>
+    <option value="3">kh612</option>
+    <option value="4">kh615</option>
+    <option value="5">kh618</option>
+</select>
+<br>
+<br>
+
+<a>phase current:</a>
+<input type="text" name="userPhaseCurrent" value="100" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>rated current:</a>
+<input type="text" name="userRatedCurrent" value="100" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>halt voltage:</a>
+<input type="text" name="userHaltVoltage" value="100" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>tolerance:</a>
+<input type="text" name="userTolerance" value="100" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>speed limit:</a>
+<input type="text" name="userLimitSpeed" value="38" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>speed mode:</a>
+<select name="userSpeedMode" onkeyup="formChanged()" onchange="formChanged()">
+    <option value="0">switch 3spd </option>
+    <option value="1">cycle 3spd</option>
+    <option value="2">high switch 3spd</option>
+    <option value="3">cycle 4spd</option>
+</select>
+<br>
+<br>
+<a>speed limit 1:</a>
+<input type="text" name="userSpeed1" value="24" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>speed limit 2:</a>
+<input type="text" name="userSpeed2" value="24" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>speed limit 3:</a>
+<input type="text" name="userSpeed3" value="24" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>speed limit 4:</a>
+<input type="text" name="userSpeed4" value="24" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>block time:</a>
+<input type="text" name="userBlockTime" value="10" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>auto cruising time:</a>
+<input type="text" name="userAutoCruisingTime" value="10" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>slip charge mode:</a>
+<select name="userSlipChargeMode" onkeyup="formChanged()" onchange="formChanged()">
+    <option value="0">enable</option>
+    <option value="1">disable</option>
+</select>
+<br>
+<br>
+<a>indicate mode:</a>
+<select name="userIndicateMode" onkeyup="formChanged()" onchange="formChanged()">
+    <option value="0">common vcc</option>
+    <option value="1">common gnd</option>
+</select>
+<br>
+<br>
+<a>ebs mode:</a>
+<select name="userEBSLevel" onkeyup="formChanged()" onchange="formChanged()">
+    <option value="0">low</option>
+    <option value="1">medium</option>
+    <option value="2">high</option>
+    <option value="255">unlimited</option>
+</select>
+<br>
+<br>
+<a>converse speed:</a>
+<input type="text" name="userConverseSpeed" value="38" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>guard level:</a>
+<select name="userGuardLevel" onkeyup="formChanged()" onchange="formChanged()">
+    <option value="0">low</option>
+    <option value="1">high</option>
+</select>
+<br>
+<br>
+<a>ebs limiting voltage:</a>
+<input type="text" name="userEBSLimVoltage" value="24" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>throttle burn protect:</a>
+<select name="userBarProtect" onkeyup="formChanged()" onchange="formChanged()">
+    <option value="0">disabled</option>
+    <option value="1">enabled</option>
+</select>
+<br>
+<br>
+<a>pedal assist level:</a>
+<input type="text" name="userPedalAssistSensor" value="21" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>pedal start pulse:</a>
+<input type="text" name="userp3Design" value="15" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>hall angle:</a>
+<select name="userHallAngle" onkeyup="formChanged()" onchange="formChanged()">
+    <option value="1">120°</option>
+    <option value="0">60°</option>
+</select>
+<br>
+<br>
+<a>default speed:</a>
+<select name="userDefaultSpeed" onkeyup="formChanged()" onchange="formChanged()">
+    <option value="0">0</option>
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+</select>
+<br>
+<br>
+<a>limit cruise:</a>
+<select name="userLimitCruise" onkeyup="formChanged()" onchange="formChanged()">
+    <option value="0">disabled</option>
+    <option value="1">enabled</option>
+</select>
+<br>
+<br>
+<a>pedal assist max speed:</a>
+<input type="text" name="userPedalAssistMaxSpeed" value="21" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>flux weaken:</a>
+<input type="text" name="userFluxWeaken" value="21" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>flux fine tune:</a>
+<input type="text" name="userFluxFineTune" value="21" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>weak position:</a>
+<input type="text" name="userWeakPosition" value="21" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>weak turn point:</a>
+<input type="text" name="userWeakTurnPoint" value="21" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>regen brake enable:</a>
+<select name="userRegenBrakeEnable" onkeyup="formChanged()" onchange="formChanged()">
+    <option value="0">disabled</option>
+    <option value="1">enabled</option>
+</select>
+<br>
+<br>
+
+<a>soft start enable:</a>
+<select name="userSoftStartEnable" onkeyup="formChanged()" onchange="formChanged()">
+    <option value="0">disabled</option>
+    <option value="1">enabled</option>
+</select>
+<br>
+<br>
+
+<a>softlvc enable:</a>
+<select name="userSoftLVCDisable" onkeyup="formChanged()" onchange="formChanged()">
+    <option value="1">disabled</option>
+    <option value="0">enabled</option>
+</select>
+<br>
+<br>
+<a>softlvc speed 1:</a>
+<input type="text" name="userSoftLVCSpeed1" value="21" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>softlvc speed 2:</a>
+<input type="text" name="userSoftLVCSpeed2" value="21" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>softlvc speed 3:</a>
+<input type="text" name="userSoftLVCSpeed3" value="21" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>softlvc speed 4:</a>
+<input type="text" name="userSoftLVCSpeed4" value="21" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>current percent 1:</a>
+<input type="text" name="userCurrentPerc1" value="21" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>current percent 2:</a>
+<input type="text" name="userCurrentPerc2" value="21" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>current percent 3:</a>
+<input type="text" name="userCurrentPerc3" value="21" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>current percent 4:</a>
+<input type="text" name="userCurrentPerc4" value="21" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>battery current limit:</a>
+<input type="text" name="userBatteryCurrentLimit" value="21" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>soft start time:</a>
+<input type="text" name="userSoftStartTime" value="21" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>slow speed percent:</a>
+<input type="text" name="userSlowSpeedPercent" value="21" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>recover speed percent:</a>
+<input type="text" name="userRecoverSpeedPercent" value="21" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+<a>current compensation:</a>
+<input type="text" name="userCurrentCompensation" value="21" onkeyup="formChanged()" onchange="formChanged()" />
+<br>
+<br>
+
+</html>
