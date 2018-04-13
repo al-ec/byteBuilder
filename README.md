@@ -3,4 +3,4 @@
 
 ## Installation/testing
 
-Drag the .html & .txt files into the same folder and launch in Google Chrome, or browser of your choice.
+Drag the .html file into a folder/server and launch in Google Chrome, or browser of your choice.
