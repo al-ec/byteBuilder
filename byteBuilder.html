@@ -1,168 +1,104 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
+<title>byteCreator (KH6xx)</title>
+<script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
 <script>
-    var userModel = 3;
-    var userPhaseCurrent = 100;
-    var userRatedCurrent = 100;
-    var userHaltVoltage = 100;
-    var userTolerance = 100;
-    var userLimitSpeed = 38;
-    var userSpeedMode = 1;
-    var userSpeed1 = 24;
-    var userSpeed2 = 24;
-    var userSpeed3 = 24;
-    var userSpeed4 = 24;
-    var userBlockTime = 10;
-    var userAutoCruisingTime = 10;
-    var userSlipChargeMode = 1;
-    var userIndicateMode = 1;
-    var userEBSLevel = 4;
-    var userConverseSpeed = 38;
-    var userEBSLimVoltage = 0;
-    var userGuardLevel = 0;
-    var userBarProtect = 0;
-    var userPedalAssistSensor = 0;
-    var userp3Design = 0;
-    var userHallAngle = 1;
-    var userDefaultSpeed = 1;
-    var userPedalAssistMaxSpeed = 30;
-    var userFluxWeaken = 191;
-    var userFluxFineTune = 255;
-    var userWeakPosition = 40;
-    var userWeakTurnPoint = 255;
-    var userRegenBrakeEnable = 0;
-    var userSoftStartEnable = 0;
-    var userSoftLVCDisable = 0;
-    var userSoftLVCSpeed1 = 0;
-    var userSoftLVCSpeed2 = 0;
-    var userSoftLVCSpeed3 = 0;
-    var userSoftLVCSpeed4 = 0;
-    var userCurrentPerc1 = 0;
-    var userCurrentPerc2 = 0;
-    var userCurrentPerc3 = 0;
-    var userCurrentPerc4 = 0;
-    var userBatteryCurrentLimit = 80;
-    var userSoftStartTime = 0;
-    var userSlowSpeedPercent = 0;
-    var userRecoverSpeedPercent = 0;
-    var userCurrentCompensation = 46;
-    // grabs user input
-    function formChanged() {
-        userModel = document.getElementsByName("userModel")[0].value;
-        userPhaseCurrent = document.getElementsByName("userPhaseCurrent")[0].value;
-        userRatedCurrent = document.getElementsByName("userRatedCurrent")[0].value;
-        userHaltVoltage = document.getElementsByName("userHaltVoltage")[0].value;
-        userTolerance = document.getElementsByName("userTolerance")[0].value;
-        userLimitSpeed = document.getElementsByName("userLimitSpeed")[0].value;
-        userSpeedMode = document.getElementsByName("userSpeedMode")[0].value;
-        userSpeed1 = document.getElementsByName("userSpeed1")[0].value;
-        userSpeed2 = document.getElementsByName("userSpeed2")[0].value;
-        userSpeed3 = document.getElementsByName("userSpeed3")[0].value;
-        userSpeed4 = document.getElementsByName("userSpeed4")[0].value;
-        userBlockTime = document.getElementsByName("userBlockTime")[0].value;
-        userAutoCruisingTime = document.getElementsByName("userAutoCruisingTime")[0].value;
-        userSlipChargeMode = document.getElementsByName("userSlipChargeMode")[0].value;
-        userIndicateMode = document.getElementsByName("userIndicateMode")[0].value;
-        userEBSLevel = document.getElementsByName("userEBSLevel")[0].value;
-        userConverseSpeed = document.getElementsByName("userConverseSpeed")[0].value;
-        userEBSLimVoltage = document.getElementsByName("userEBSLimVoltage")[0].value;
-        userGuardLevel = document.getElementsByName("userGuardLevel")[0].value;
-        userBarProtect = document.getElementsByName("userBarProtect")[0].value;
-        userPedalAssistSensor = document.getElementsByName("userPedalAssistSensor")[0].value;
-        userp3Design = document.getElementsByName("userp3Design")[0].value;
-        userHallAngle = document.getElementsByName("userHallAngle")[0].value;
-        userDefaultSpeed = document.getElementsByName("userDefaultSpeed")[0].value;
-        userLimitCruise = document.getElementsByName("userLimitCruise")[0].value;
-        userPedalAssistMaxSpeed = document.getElementsByName("userPedalAssistMaxSpeed")[0].value;
-        userFluxWeaken = document.getElementsByName("userFluxWeaken")[0].value;
-        userFluxFineTune = document.getElementsByName("userFluxFineTune")[0].value;
-        userWeakPosition = document.getElementsByName("userWeakPosition")[0].value;
-        userWeakTurnPoint = document.getElementsByName("userWeakTurnPoint")[0].value;
-        userRegenBrakeEnable = document.getElementsByName("userRegenBrakeEnable")[0].value;
-        userSoftStartEnable = document.getElementsByName("userSoftStartEnable")[0].value;
-        userSoftLVCDisable = document.getElementsByName("userSoftLVCDisable")[0].value;
-        userSoftLVCSpeed1 = document.getElementsByName("userSoftLVCSpeed1")[0].value;
-        userSoftLVCSpeed2 = document.getElementsByName("userSoftLVCSpeed2")[0].value;
-        userSoftLVCSpeed3 = document.getElementsByName("userSoftLVCSpeed3")[0].value;
-        userSoftLVCSpeed4 = document.getElementsByName("userSoftLVCSpeed4")[0].value;
-        userCurrentPerc1 = document.getElementsByName("userCurrentPerc1")[0].value;
-        userCurrentPerc2 = document.getElementsByName("userCurrentPerc2")[0].value;
-        userCurrentPerc3 = document.getElementsByName("userCurrentPerc3")[0].value;
-        userCurrentPerc4 = document.getElementsByName("userCurrentPerc4")[0].value;
-        userBatteryCurrentLimit = document.getElementsByName("userBatteryCurrentLimit")[0].value;
-        userSoftStartTime = document.getElementsByName("userSoftStartTime")[0].value;
-        userSlowSpeedPercent = document.getElementsByName("userSlowSpeedPercent")[0].value;
-        userRecoverSpeedPercent = document.getElementsByName("userRecoverSpeedPercent")[0].value;
-        userCurrentCompensation = document.getElementsByName("userCurrentCompensation")[0].value;
-        updateView();
+    var defaultConfig = [];
+    var controllerConfig = new Uint8Array(64);
+    var defaultFile = "defaultConfig.txt";
+
+    $.get(defaultFile, function (data) {
+        var perLine = data.split('\n');
+        for (i = 0; i < perLine.length; i++) {
+            var line = perLine[i].split(' ');
+            defaultConfig[i] = {
+                'setting': line[0],
+                'value': line[1]
+            }
+        }
+    });
+
+    function initializeForm() {
+        $.get(defaultFile, function (data) {
+            var perLine = data.split('\n');
+            for (i = 0; i < perLine.length; i++) {
+                document.getElementsByName(defaultConfig[i].setting)[0].value = defaultConfig[i].value;
+            }
+        });
     }
 
     function updateView() {
         // 0-1 are garbage arrays
         controllerConfig[0] = 2;
         controllerConfig[1] = 15;
-        controllerConfig[2] = calcPhaseCurrent(userPhaseCurrent, userModel);
-        controllerConfig[3] = calcRatedCurrent(userRatedCurrent, userModel);
-        controllerConfig[4] = userHaltVoltage * 3.285;
-        controllerConfig[5] = userTolerance * 3.285;
-        controllerConfig[6] = userLimitSpeed * 0.96;
-        controllerConfig[7] = userSpeedMode;
-        controllerConfig[8] = userSpeed1 * 0.8;
-        controllerConfig[9] = userSpeed2 * 0.8;
-        controllerConfig[10] = userSpeed3 * 0.8;
-        controllerConfig[11] = userBlockTime * 10;
-        controllerConfig[12] = userAutoCruisingTime * 10;
-        controllerConfig[13] = userSlipChargeMode;
-        controllerConfig[14] = userIndicateMode;
-        controllerConfig[15] = userEBSLevel;
-        controllerConfig[16] = userConverseSpeed * 1.28;
-        controllerConfig[17] = userEBSLimVoltage * 3.285;
-        controllerConfig[18] = userGuardLevel;
-        controllerConfig[19] = userBarProtect;
-        controllerConfig[20] = userPedalAssistSensor;
-        controllerConfig[21] = userp3Design;
-        controllerConfig[22] = userDefaultSpeed;
-        controllerConfig[23] = userSpeed4 * 0.8;
-        controllerConfig[24] = userModel;
-        controllerConfig[25] = userLimitCruise;
-        controllerConfig[26] = userPedalAssistMaxSpeed * 1.28;
-        controllerConfig[27] = userFluxWeaken;
-        controllerConfig[28] = userFluxFineTune;
-        controllerConfig[29] = userWeakPosition;
-        controllerConfig[30] = userWeakTurnPoint;
+        controllerConfig[2] = calcPhaseCurrent(defaultConfig[1].value, defaultConfig[0].value);
+        controllerConfig[3] = calcRatedCurrent(defaultConfig[2].value, defaultConfig[0].value);
+        controllerConfig[4] = defaultConfig[3].value * 3.285;
+        controllerConfig[5] = defaultConfig[4].value * 3.285;
+        controllerConfig[6] = defaultConfig[5].value * 0.96;
+        controllerConfig[7] = defaultConfig[6].value;
+        controllerConfig[8] = defaultConfig[7].value * 0.8;
+        controllerConfig[9] = defaultConfig[8].value * 0.8;
+        controllerConfig[10] = defaultConfig[9].value * 0.8;
+        controllerConfig[11] = defaultConfig[11].value * 10;
+        controllerConfig[12] = defaultConfig[12].value * 10;
+        controllerConfig[13] = defaultConfig[13].value;
+        controllerConfig[14] = defaultConfig[14].value;
+        controllerConfig[15] = defaultConfig[15].value;
+        controllerConfig[16] = defaultConfig[16].value * 1.28;
+        controllerConfig[17] = defaultConfig[17].value * 3.285;
+        controllerConfig[18] = defaultConfig[18].value;
+        controllerConfig[19] = defaultConfig[19].value;
+        controllerConfig[20] = defaultConfig[20].value;
+        controllerConfig[21] = defaultConfig[21].value;
+        controllerConfig[22] = defaultConfig[23].value;
+        controllerConfig[23] = defaultConfig[10].value * 0.8;
+        controllerConfig[24] = defaultConfig[0].value;
+        controllerConfig[25] = defaultConfig[45].value;
+        controllerConfig[26] = defaultConfig[24].value * 1.28;
+        controllerConfig[27] = defaultConfig[25].value;
+        controllerConfig[28] = defaultConfig[26].value;
+        controllerConfig[29] = defaultConfig[27].value;
+        controllerConfig[30] = defaultConfig[28].value;
         var flag0 = 0;
         var flag1 = 0;
         var flag2 = 0;
         var flag3 = 0;
-        var flag4 = userSoftLVCDisable;
-        var flag5 = userSoftStartEnable;
-        var flag6 = userRegenBrakeEnable;
-        var flag7 = userHallAngle;
+        var flag4 = defaultConfig[31].value;
+        var flag5 = defaultConfig[30].value;
+        var flag6 = defaultConfig[29].value;
+        var flag7 = defaultConfig[22].value;
         controllerConfig[31] = createMask(flag7, flag6, flag5, flag4, flag3, flag2, flag1);
         controllerConfig[32] = 0;
-        controllerConfig[33] = userSoftLVCSpeed1 * 0.8;
-        controllerConfig[34] = userSoftLVCSpeed2 * 0.8;
-        controllerConfig[35] = userSoftLVCSpeed3 * 0.8;
-        controllerConfig[36] = userSoftLVCSpeed4 * 0.8;
-        controllerConfig[37] = userCurrentPerc1 * 1.28;
-        controllerConfig[38] = userCurrentPerc2 * 1.28;
-        controllerConfig[39] = userCurrentPerc3 * 1.28;
-        controllerConfig[40] = userCurrentPerc4 * 1.28;
-        controllerConfig[41] = userBatteryCurrentLimit * 13.18;
-        controllerConfig[42] = userSoftStartTime;
-        controllerConfig[43] = userSlowSpeedPercent * 0.8;
-        controllerConfig[44] = userRecoverSpeedPercent * 1.28;
-        controllerConfig[45] = userCurrentCompensation;
+        controllerConfig[33] = defaultConfig[32].value * 0.8;
+        controllerConfig[34] = defaultConfig[33].value * 0.8;
+        controllerConfig[35] = defaultConfig[34].value * 0.8;
+        controllerConfig[36] = defaultConfig[35].value * 0.8;
+        controllerConfig[37] = defaultConfig[36].value * 1.28;
+        controllerConfig[38] = defaultConfig[37].value * 1.28;
+        controllerConfig[39] = defaultConfig[38].value * 1.28;
+        controllerConfig[40] = defaultConfig[39].value * 1.28;
+        controllerConfig[41] = defaultConfig[40].value * 13.18;
+        controllerConfig[42] = defaultConfig[41].value;
+        controllerConfig[43] = defaultConfig[42].value * 0.8;
+        controllerConfig[44] = defaultConfig[43].value * 1.28;
+        controllerConfig[45] = defaultConfig[44].value;
         // checksum on offset 63
         controllerConfig[63] = instanceCheck();
         x.innerHTML = controllerConfig.join(" ");
     }
-    var controllerConfig = new Uint8Array(64);
+
+    function formChanged() {
+        for (i = 0; i < 44; i++) {
+            defaultConfig[i].value = document.getElementsByName(defaultConfig[i].setting)[0].value;
+        }
+        updateView();
+    }
 
     function createMask() {
-        var nMask = 0
-            , nFlag = 0
-            , nLen = arguments.length > 32 ? 32 : arguments.length;
+        var nMask = 0,
+            nFlag = 0,
+            nLen = arguments.length > 32 ? 32 : arguments.length;
         for (nFlag; nFlag < nLen; nMask |= arguments[nFlag] << nFlag++);
         return nMask;
     }
@@ -182,8 +118,7 @@
         }
         if (model == "5") {
             return value * 0.53
-        }
-        else {
+        } else {
             return value * 1.20;
         }
     }
@@ -203,14 +138,28 @@
         }
         if (model == "5") {
             return value * 1.70
-        }
-        else {
+        } else {
             return value * 2.73;
         }
     }
 
     function instanceCheck() {
-        return controllerConfig[0] ^ controllerConfig[1] ^ controllerConfig[2] ^ controllerConfig[3] ^ controllerConfig[4] ^ controllerConfig[5] ^ controllerConfig[6] ^ controllerConfig[7] ^ controllerConfig[8] ^ controllerConfig[9] ^ controllerConfig[10] ^ controllerConfig[11] ^ controllerConfig[12] ^ controllerConfig[13] ^ controllerConfig[14] ^ controllerConfig[15] ^ controllerConfig[16] ^ controllerConfig[17] ^ controllerConfig[18] ^ controllerConfig[19] ^ controllerConfig[20] ^ controllerConfig[21] ^ controllerConfig[22] ^ controllerConfig[23] ^ controllerConfig[24] ^ controllerConfig[25] ^ controllerConfig[26] ^ controllerConfig[27] ^ controllerConfig[28] ^ controllerConfig[29] ^ controllerConfig[30] ^ controllerConfig[31] ^ controllerConfig[32] ^ controllerConfig[33] ^ controllerConfig[34] ^ controllerConfig[35] ^ controllerConfig[36] ^ controllerConfig[37] ^ controllerConfig[38] ^ controllerConfig[39] ^ controllerConfig[40] ^ controllerConfig[41] ^ controllerConfig[42] ^ controllerConfig[43] ^ controllerConfig[44] ^ controllerConfig[45] ^ controllerConfig[46] ^ controllerConfig[47] ^ controllerConfig[48] ^ controllerConfig[49] ^ controllerConfig[50] ^ controllerConfig[51] ^ controllerConfig[52] ^ controllerConfig[53] ^ controllerConfig[54] ^ controllerConfig[55] ^ controllerConfig[56] ^ controllerConfig[57] ^ controllerConfig[58] ^ controllerConfig[59] ^ controllerConfig[60] ^ controllerConfig[61] ^ controllerConfig[62];
+        return controllerConfig[0] ^ controllerConfig[1] ^ controllerConfig[2] ^ controllerConfig[3] ^ controllerConfig[
+                4] ^ controllerConfig[5] ^ controllerConfig[6] ^ controllerConfig[7] ^ controllerConfig[8] ^
+            controllerConfig[9] ^ controllerConfig[10] ^ controllerConfig[11] ^ controllerConfig[12] ^ controllerConfig[
+                13] ^ controllerConfig[14] ^ controllerConfig[15] ^ controllerConfig[16] ^ controllerConfig[17] ^
+            controllerConfig[18] ^ controllerConfig[19] ^ controllerConfig[20] ^ controllerConfig[21] ^
+            controllerConfig[22] ^ controllerConfig[23] ^ controllerConfig[24] ^ controllerConfig[25] ^
+            controllerConfig[26] ^ controllerConfig[27] ^ controllerConfig[28] ^ controllerConfig[29] ^
+            controllerConfig[30] ^ controllerConfig[31] ^ controllerConfig[32] ^ controllerConfig[33] ^
+            controllerConfig[34] ^ controllerConfig[35] ^ controllerConfig[36] ^ controllerConfig[37] ^
+            controllerConfig[38] ^ controllerConfig[39] ^ controllerConfig[40] ^ controllerConfig[41] ^
+            controllerConfig[42] ^ controllerConfig[43] ^ controllerConfig[44] ^ controllerConfig[45] ^
+            controllerConfig[46] ^ controllerConfig[47] ^ controllerConfig[48] ^ controllerConfig[49] ^
+            controllerConfig[50] ^ controllerConfig[51] ^ controllerConfig[52] ^ controllerConfig[53] ^
+            controllerConfig[54] ^ controllerConfig[55] ^ controllerConfig[56] ^ controllerConfig[57] ^
+            controllerConfig[58] ^ controllerConfig[59] ^ controllerConfig[60] ^ controllerConfig[61] ^
+            controllerConfig[62];
     }
     // for html demo
     function adjust_textarea(h) {
@@ -220,6 +169,9 @@
             $(this).parent().children("input").focus();
         });
     }
+
+
+    initializeForm();
 </script>
 <style type="text/css">
     label2 {
@@ -228,7 +180,7 @@
         top: 20px;
         left: 3px;
     }
-    
+
     .form-style-7 {
         max-width: 200px;
         margin: 50px auto;
@@ -237,7 +189,7 @@
         padding: 20px;
         font-family: Georgia, "Times New Roman", Times, serif;
     }
-    
+
     .form-style-7 h1 {
         display: block;
         text-align: center;
@@ -246,27 +198,27 @@
         color: #5C5C5C;
         font-size: x-large;
     }
-    
+
     .form-style-7 ul {
         list-style: none;
         padding: 0;
         margin: 0;
     }
-    
+
     .form-style-7 li {
         display: block;
         padding: 9px;
         margin-bottom: 30px;
         border-radius: 3px;
     }
-    
+
     .form-style-7 li:last-child {
         border: none;
         margin-bottom: 0px;
         text-align: center;
     }
-    
-    .form-style-7 li > label {
+
+    .form-style-7 li>label {
         display: block;
         float: left;
         margin-top: -19px;
@@ -278,7 +230,7 @@
         overflow: hidden;
         font-family: Arial, Helvetica, sans-serif;
     }
-    
+
     .form-style-7 input[type="text"],
     .form-style-7 input[type="date"],
     .form-style-7 input[type="select"],
@@ -304,7 +256,7 @@
         padding: 0;
         font-family: Georgia, "Times New Roman", Times, serif;
     }
-    
+
     .form-style-7 input[type="text"]:focus,
     .form-style-7 input[type="select"]:focus,
     .form-style-7 input[type="date"]:focus,
@@ -317,8 +269,8 @@
     .form-style-7 input[type="password"]:focus,
     .form-style-7 textarea:focus,
     .form-style-7 select:focus {}
-    
-    .form-style-7 li > span {
+
+    .form-style-7 li>span {
         background: yellow;
         display: block;
         padding: 3px;
@@ -328,11 +280,11 @@
         font-family: Arial, Helvetica, sans-serif;
         font-size: 11px;
     }
-    
+
     .form-style-7 textarea {
         resize: none;
     }
-    
+
     .form-style-7 input[type="submit"],
     .form-style-7 input[type="button"],
     .form-style-7 input[type="select"] {
@@ -343,32 +295,35 @@
         border-radius: 3px;
         color: #D2E2FF;
     }
-    
+
     .form-style-7 input[type="submit"]:hover,
     .form-style-7 input[type="select"]: hover,
     .form-style-7 input[type="button"]:hover {
         background: #6B9FFF;
         color: #fff;
     }
-    
+
     * {
         box-sizing: border-box;
     }
+
     /* Create four equal columns that floats next to each other */
-    
+
     .column {
         float: left;
         width: 25%;
         padding: 10px;
     }
+
     /* Clear floats after the columns */
-    
+
     .row:after {
         content: "";
         display: table;
         clear: both;
     }
 </style>
+<button onclick="formChanged()">Manually refresh</button>
 <br>
 <p id="x" style="background-color: black; color: white; overflow-wrap: break-word;
   word-wrap: break-word;hyphens: auto; margin-left: 20%; padding-left: 10px; padding-top:10px; width: 50%; padding-bottom: 10px;height: auto;">change a setting to start generating an array!</p>
@@ -383,22 +338,39 @@
                     <option value="3">kh612</option>
                     <option value="4">kh615</option>
                     <option value="5">kh618</option>
-                </select> <span>Select your controller model</span> </li>
+                </select>
+                <span>Select your controller model</span>
+            </li>
             <li>
                 <label for="userPhaseCurrent">Phase current</label>
-                <input type="text" name="userPhaseCurrent" onkeyup="formChanged()" value="100" onchange="formChanged()" /><a>amps</a><span>Description coming soon</span></li>
+                <input type="text" name="userPhaseCurrent" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>amps</a>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userRatedCurrent">Rated current</label>
-                <input type="text" name="userRatedCurrent" onkeyup="formChanged()" value="100" onchange="formChanged()" /><a>amps</a><span>Description coming soon</span></li>
+                <input type="text" name="userRatedCurrent" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>amps</a>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userHaltVoltage">Halt voltage</label>
-                <input type="text" name="userHaltVoltage" value="100" onkeyup="formChanged()" onchange="formChanged()" /><a>volts</a><span>Description coming soon</span></li>
+                <input type="text" name="userHaltVoltage" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>volts</a>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userTolerance">Tolerance</label>
-                <input type="text" name="userTolerance" value="100" onkeyup="formChanged()" onchange="formChanged()" /> <a>amps</a><span>Description coming soon</span></li>
+                <input type="text" name="userTolerance" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>amps</a>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userLimitSpeed">Speed limit</label>
-                <input type="text" name="userLimitSpeed" value="100" onkeyup="formChanged()" onchange="formChanged()" /> <a>mph</a><span>Description coming soon</span></li>
+                <input type="text" name="userLimitSpeed" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>mph</a>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userSpeedMode">Speed limit mode</label>
                 <select name="userSpeedMode" onkeyup="formChanged()" onchange="formChanged()">
@@ -406,25 +378,45 @@
                     <option value="1">cycle 3spd</option>
                     <option value="2">high switch 3spd</option>
                     <option value="3">cycle 4spd</option>
-                </select> <span>Description coming soon</span> </li>
+                </select>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userCurrentPerc1">Current % 1</label>
-                <input type="text" name="userCurrentPerc1" value="100" onkeyup="formChanged()" onchange="formChanged()" /><a>%</a><span>Description coming soon</span></li>
+                <input type="text" name="userCurrentPerc1" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>%</a>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userCurrentPerc2">Current % 2</label>
-                <input type="text" name="userCurrentPerc2" value="100" onkeyup="formChanged()" onchange="formChanged()" /><a>%</a><span>Description coming soon</span></li>
+                <input type="text" name="userCurrentPerc2" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>%</a>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userCurrentPerc3">Current % 3</label>
-                <input type="text" name="userCurrentPerc3" value="100" onkeyup="formChanged()" onchange="formChanged()" /><a>%</a><span>Description coming soon</span></li>
+                <input type="text" name="userCurrentPerc3" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>%</a>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userCurrentPerc4">Current % 4</label>
-                <input type="text" name="userCurrentPerc4" value="100" onkeyup="formChanged()" onchange="formChanged()" /><a>%</a><span>Description coming soon</span></li>
+                <input type="text" name="userCurrentPerc4" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>%</a>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userBatteryCurrentLimit">Battery current limit</label>
-                <input type="text" name="userBatteryCurrentLimit" value="100" onkeyup="formChanged()" onchange="formChanged()" /><a>amps</a><span>Description coming soon</span></li>
+                <input type="text" name="userBatteryCurrentLimit" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>amps</a>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userRecoverSpeedPercent">"Recover" speed %</label>
-                <input type="text" name="userRecoverSpeedPercent" value="100" onkeyup="formChanged()" onchange="formChanged()" /><a>%</a><span>Description coming soon</span> </li>
+                <input type="text" name="userRecoverSpeedPercent" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>%</a>
+                <span>Description coming soon</span>
+            </li>
         </ul>
     </form>
 </div>
@@ -433,46 +425,84 @@
         <ul>
             <li>
                 <label for="userSpeed1">Speed preset #1</label>
-                <input type="text" name="userSpeed1" value="24" onkeyup="formChanged()" onchange="formChanged()" /><a>mph</a><span>Select your controller model</span> </li>
+                <input type="text" name="userSpeed1" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>mph</a>
+                <span>Select your controller model</span>
+            </li>
             <li>
                 <label for="userSpeed2">Speed preset #2</label>
-                <input type="text" name="userSpeed2" value="100" onkeyup="formChanged()" onchange="formChanged()" /><a>mph</a><span>Description coming soon</span></li>
+                <input type="text" name="userSpeed2" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>mph</a>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userSpeed3">Speed preset #3</label>
-                <input type="text" name="userSpeed3" value="100" onkeyup="formChanged()" onchange="formChanged()" /><a>mph</a><span>Description coming soon</span></li>
+                <input type="text" name="userSpeed3" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>mph</a>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userSpeed4">Speed preset #4</label>
-                <input type="text" name="userSpeed4" value="100" onkeyup="formChanged()" onchange="formChanged()" /><a>mph</a><span>Description coming soon</span></li>
+                <input type="text" name="userSpeed4" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>mph</a>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userBlockTime">Block time</label>
-                <input type="text" name="userBlockTime" value="100" onkeyup="formChanged()" onchange="formChanged()" /><a>sec</a><span>Description coming soon</span></li>
+                <input type="text" name="userBlockTime" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>sec</a>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userAutoCruisingTime">Auto-cruise time</label>
-                <input type="text" name="userAutoCruisingTime" value="100" onkeyup="formChanged()" onchange="formChanged()" /><a>sec</a><span>Description coming soon</span></li>
+                <input type="text" name="userAutoCruisingTime" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>sec</a>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userSlipChargeMode">"Slip-charge" mode</label>
                 <select name="userSlipChargeMode" onkeyup="formChanged()" onchange="formChanged()">
                     <option value="0">enable</option>
                     <option value="1">disable</option>
-                </select> <span>Description coming soon</span> </li>
+                </select>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userSoftLVCSpeed1">SoftLVC speed 1</label>
-                <input type="text" name="userSoftLVCSpeed1" value="21" onkeyup="formChanged()" onchange="formChanged()" /><a>mph</a><span>Description coming soon</span></li>
+                <input type="text" name="userSoftLVCSpeed1" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>mph</a>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userSoftLVCSpeed2">SoftLVC speed 2</label>
-                <input type="text" name="userSoftLVCSpeed2" value="21" onkeyup="formChanged()" onchange="formChanged()" /><a>mph</a><span>Description coming soon</span></li>
+                <input type="text" name="userSoftLVCSpeed2" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>mph</a>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userSoftLVCSpeed3">SoftLVC speed 3</label>
-                <input type="text" name="userSoftLVCSpeed3" value="21" onkeyup="formChanged()" onchange="formChanged()" /><a>mph</a><span>Description coming soon</span></li>
+                <input type="text" name="userSoftLVCSpeed3" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>mph</a>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userSoftLVCSpeed4">SoftLVC speed 4</label>
-                <input type="text" name="userSoftLVCSpeed4" value="21" onkeyup="formChanged()" onchange="formChanged()" /><a>mph</a><span>Description coming soon</span></li>
+                <input type="text" name="userSoftLVCSpeed4" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>mph</a>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userSoftStartTime">Soft start time</label>
-                <input type="text" name="userSoftStartTime" value="100" onkeyup="formChanged()" onchange="formChanged()" /><a>sec</a><span>Description coming soon</span></li>
+                <input type="text" name="userSoftStartTime" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>sec</a>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userSlowSpeedPercent">"Slow" sped %</label>
-                <input type="text" name="userSlowSpeedPercent" value="100" onkeyup="formChanged()" onchange="formChanged()" /><a>%</a><span>Description coming soon</span></li>
+                <input type="text" name="userSlowSpeedPercent" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>%</a>
+                <span>Description coming soon</span>
+            </li>
         </ul>
     </form>
 </div>
@@ -484,13 +514,17 @@
                 <select name="userHallAngle" onkeyup="formChanged()" onchange="formChanged()">
                     <option value="1">120°</option>
                     <option value="0">60°</option>
-                </select> <span>Description coming soon</span> </li>
+                </select>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userIndicateMode">Indicate mode</label>
                 <select name="userIndicateMode" onkeyup="formChanged()" onchange="formChanged()">
                     <option value="0">common vcc</option>
                     <option value="1">common gnd</option>
-                </select> <span>Description coming soon</span> </li>
+                </select>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userEBSLevel">EBS mode</label>
                 <select name="userEBSLevel" onkeyup="formChanged()" onchange="formChanged()">
@@ -498,46 +532,67 @@
                     <option value="1">medium</option>
                     <option value="2">high</option>
                     <option value="255">unlimited</option>
-                </select> <span>Description coming soon</span> </li>
+                </select>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userConverseSpeed">Reverse speed</label>
-                <input type="text" name="userConverseSpeed" value="100" onkeyup="formChanged()" onchange="formChanged()" /><a>mph</a><span>Description coming soon</span></li>
+                <input type="text" name="userConverseSpeed" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>mph</a>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userGuardLevel">Guard level</label>
                 <select name="userGuardLevel" onkeyup="formChanged()" onchange="formChanged()">
                     <option value="0">low</option>
                     <option value="1">high</option>
-                </select> <span>Description coming soon</span> </li>
+                </select>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userBarProtect">Throttle protect mode</label>
                 <select name="userBarProtect" onkeyup="formChanged()" onchange="formChanged()">
                     <option value="0">disable</option>
                     <option value="1">enable</option>
-                </select> <span>Description coming soon</span> </li>
+                </select>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userPedalAssistSensor">Pedal assist level</label>
-                <input type="text" name="userPedalAssistSensor" value="100" onkeyup="formChanged()" onchange="formChanged()" /><a>?</a><span>Description coming soon</span></li>
+                <input type="text" name="userPedalAssistSensor" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>?</a>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userRegenBrakeEnable">Regen-brake level</label>
                 <select name="userRegenBrakeEnable" onkeyup="formChanged()" onchange="formChanged()">
                     <option value="0">disabled</option>
                     <option value="1">enabled</option>
-                </select> <span>Description coming soon</span> </li>
+                </select>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userSoftStartEnable">Soft start</label>
                 <select name="userSoftStartEnable" onkeyup="formChanged()" onchange="formChanged()">
                     <option value="0">disabled</option>
                     <option value="1">enabled</option>
-                </select> <span>Description coming soon</span> </li>
+                </select>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userSoftLVCDisable">SoftLVC</label>
                 <select name="userSoftLVCDisable" onkeyup="formChanged()" onchange="formChanged()">
                     <option value="1">disabled</option>
                     <option value="0">enabled</option>
-                </select> <span>Description coming soon</span> </li>
+                </select>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userCurrentCompensation">Current compensation</label>
-                <input type="text" name="userCurrentCompensation" value="100" onkeyup="formChanged()" onchange="formChanged()" /><a>%</a><span>Description coming soon</span></li>
+                <input type="text" name="userCurrentCompensation" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>%</a>
+                <span>Description coming soon</span>
+            </li>
         </ul>
     </form>
 </div>
@@ -546,7 +601,10 @@
         <ul>
             <li>
                 <label for="userp3Design">Pedal start pulse</label>
-                <input type="text" name="userp3Design" value="100" onkeyup="formChanged()" onchange="formChanged()" /><a>amnt</a><span>Description coming soon</span></li>
+                <input type="text" name="userp3Design" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>amnt</a>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userDefaultSpeed">Default speed preset</label>
                 <select name="userDefaultSpeed" onkeyup="formChanged()" onchange="formChanged()">
@@ -554,34 +612,53 @@
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
-                </select> <span>Description coming soon</span> </li>
+                </select>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userEBSLimVoltage">EBS voltage limit</label>
-                <input type="text" name="userEBSLimVoltage" value="100" onkeyup="formChanged()" onchange="formChanged()" /><a>volts</a><span>Description coming soon</span></li>
-            <li>
-                <label for="userPedalAssistSensor">Pedal assist level</label>
-                <input type="text" name="userPedalAssistSensor" value="100" onkeyup="formChanged()" onchange="formChanged()" /><a>amnt</a><span>Description coming soon</span></li>
+                <input type="text" name="userEBSLimVoltage" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>volts</a>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userLimitCruise">Cruise limit</label>
                 <select name="userLimitCruise" onkeyup="formChanged()" onchange="formChanged()">
                     <option value="0">disabled</option>
                     <option value="1">enabled</option>
-                </select> <span>Description coming soon</span> </li>
+                </select>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userPedalAssistMaxSpeed">Pedal assist max speed</label>
-                <input type="text" name="userPedalAssistMaxSpeed" value="21" onkeyup="formChanged()" onchange="formChanged()" /> <a>amnt</a><span>Description coming soon</span></li>
+                <input type="text" name="userPedalAssistMaxSpeed" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>amnt</a>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userFluxWeaken">Flux weakening</label>
-                <input type="text" name="userFluxWeaken" value="21" onkeyup="formChanged()" onchange="formChanged()" /><a>amnt</a><span>Description coming soon</span></li>
+                <input type="text" name="userFluxWeaken" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>amnt</a>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userFluxFineTune">Flux fine tuning</label>
-                <input type="text" name="userFluxFineTune" value="21" onkeyup="formChanged()" onchange="formChanged()" /><a>amnt</a><span>Description coming soon</span></li>
+                <input type="text" name="userFluxFineTune" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>amnt</a>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userWeakPosition">Flux weakening position</label>
-                <input type="text" name="userWeakPosition" value="21" onkeyup="formChanged()" onchange="formChanged()" /><a>amnt</a><span>Description coming soon</span></li>
+                <input type="text" name="userWeakPosition" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>amnt</a>
+                <span>Description coming soon</span>
+            </li>
             <li>
                 <label for="userWeakTurnPoint">Flux weakening turn-point</label>
-                <input type="text" name="userWeakTurnPoint" value="21" onkeyup="formChanged()" onchange="formChanged()" /><a>amnt</a><span>Description coming soon</span></li>
+                <input type="text" name="userWeakTurnPoint" onkeyup="formChanged()" onchange="formChanged()" />
+                <a>amnt</a>
+                <span>Description coming soon</span>
+            </li>
         </ul>
     </form>
 </div>
