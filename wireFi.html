@@ -1,0 +1,617 @@
+<title>wireFi &rarr; Configuration</title>
+<script>
+    // default user settings
+    var userConfig = '{"userModel": 3, "userPhaseCurrent": 100, "userRatedCurrent": 100, "userHaltVoltage": 100, "userTolerance": 100, "userLimitSpeed": 38, "userSpeed1": 1, "userSpeed2": 2, "userSpeed3": 3, "userSpeed4": 4, "userBlockTime": 10, "userAutoCruisingTime": 10, "userSlipChargeMode": 1, "userIndicateMode": 1, "userEBSLevel": 0, "userConverseSpeed": 38, "userEBSLimVoltage": 0, "userGuardLevel": 0, "userBarProtect": 0, "userPedalAssistSensor": 0, "userp3Design": 0, "userHallAngle": 1, "userDefaultSpeed": 1, "userPedalAssistMaxSpeed": 31, "userFluxWeaken": 192, "userFluxFineTune": 255, "userWeakPosition": 40, "userWeakTurnPoint": 255, "userRegenBrakeEnable": 0, "userSoftStartEnable": 0, "userSoftLVCDisable": 0, "userSoftLVCSpeed1": 4, "userSoftLVCSpeed2": 38, "userSoftLVCSpeed3": 0, "userSoftLVCSpeed4": 0, "userCurrentPerc1": 0, "userCurrentPerc2": 0, "userCurrentPerc3": 0, "userCurrentPerc4": 0, "userBatteryCurrentLimit": 0, "userSoftStartTime": 0, "userSlowSpeedPercent": 0, "userRecoverSpeedPercent": 0, "userCurrentCompensation": 46 }';
+    var obj = JSON.parse(userConfig);
+    var controllerConfig = new Uint8Array(64);
+    // helper function for initForm();
+    function initUIValue(x) {
+            document.getElementsByName(x)[0].value = obj[x];
+    }
+    // fills all the form fields with default info
+    function initForm() {
+        Object.keys(obj).forEach(function (key) {
+            initUIValue(key);
+            console.log("init form");
+        })
+    }
+    // exports current data out as .txt
+    function exportForm() {
+        var blob = new Blob([JSON.stringify(obj, null, 2)], {
+            type: "application/json;charset=utf-8"
+        }).slice(2, -1);
+        var url = URL.createObjectURL(blob);
+        var elem = document.createElement("a");
+        elem.href = url;
+        elem.download = "saved_config";
+        document.body.appendChild(elem);
+        elem.click();
+        document.body.removeChild(elem);
+    }
+    // grabs user input
+    function formChanged() {
+        obj.userModel = document.getElementsByName("userModel")[0].value;
+        obj.userPhaseCurrent = document.getElementsByName("userPhaseCurrent")[0].value;
+        obj.userRatedCurrent = document.getElementsByName("userRatedCurrent")[0].value;
+        obj.userHaltVoltage = document.getElementsByName("userHaltVoltage")[0].value;
+        obj.userTolerance = document.getElementsByName("userTolerance")[0].value;
+        obj.userLimitSpeed = document.getElementsByName("userLimitSpeed")[0].value;
+        obj.userSpeedMode = document.getElementsByName("userSpeedMode")[0].value;
+        obj.userSpeed1 = document.getElementsByName("userSpeed1")[0].value;
+        obj.userSpeed2 = document.getElementsByName("userSpeed2")[0].value;
+        obj.userSpeed3 = document.getElementsByName("userSpeed3")[0].value;
+        obj.userSpeed4 = document.getElementsByName("userSpeed4")[0].value;
+        obj.userBlockTime = document.getElementsByName("userBlockTime")[0].value;
+        obj.userAutoCruisingTime = document.getElementsByName("userAutoCruisingTime")[0].value;
+        obj.userSlipChargeMode = document.getElementsByName("userSlipChargeMode")[0].value;
+        obj.userIndicateMode = document.getElementsByName("userIndicateMode")[0].value;
+        obj.userEBSLevel = document.getElementsByName("userEBSLevel")[0].value;
+        obj.userConverseSpeed = document.getElementsByName("userConverseSpeed")[0].value;
+        obj.userEBSLimVoltage = document.getElementsByName("userEBSLimVoltage")[0].value;
+        obj.userGuardLevel = document.getElementsByName("userGuardLevel")[0].value;
+        obj.userBarProtect = document.getElementsByName("userBarProtect")[0].value;
+        obj.userPedalAssistSensor = document.getElementsByName("userPedalAssistSensor")[0].value;
+        obj.userp3Design = document.getElementsByName("userp3Design")[0].value;
+        obj.userHallAngle = document.getElementsByName("userHallAngle")[0].value;
+        obj.userDefaultSpeed = document.getElementsByName("userDefaultSpeed")[0].value;
+        obj.userLimitCruise = document.getElementsByName("userLimitCruise")[0].value;
+        obj.userPedalAssistMaxSpeed = document.getElementsByName("userPedalAssistMaxSpeed")[0].value;
+        obj.userFluxWeaken = document.getElementsByName("userFluxWeaken")[0].value;
+        obj.userFluxFineTune = document.getElementsByName("userFluxFineTune")[0].value;
+        obj.userWeakPosition = document.getElementsByName("userWeakPosition")[0].value;
+        obj.userWeakTurnPoint = document.getElementsByName("userWeakTurnPoint")[0].value;
+        obj.userRegenBrakeEnable = document.getElementsByName("userRegenBrakeEnable")[0].value;
+        obj.userSoftStartEnable = document.getElementsByName("userSoftStartEnable")[0].value;
+        obj.userSoftLVCDisable = document.getElementsByName("userSoftLVCDisable")[0].value;
+        obj.userSoftLVCSpeed1 = document.getElementsByName("userSoftLVCSpeed1")[0].value;
+        obj.userSoftLVCSpeed2 = document.getElementsByName("userSoftLVCSpeed2")[0].value;
+        obj.userSoftLVCSpeed3 = document.getElementsByName("userSoftLVCSpeed3")[0].value;
+        obj.userSoftLVCSpeed4 = document.getElementsByName("userSoftLVCSpeed4")[0].value;
+        obj.userCurrentPerc1 = document.getElementsByName("userCurrentPerc1")[0].value;
+        obj.userCurrentPerc2 = document.getElementsByName("userCurrentPerc2")[0].value;
+        obj.userCurrentPerc3 = document.getElementsByName("userCurrentPerc3")[0].value;
+        obj.userCurrentPerc4 = document.getElementsByName("userCurrentPerc4")[0].value;
+        obj.userBatteryCurrentLimit = document.getElementsByName("userBatteryCurrentLimit")[0].value;
+        obj.userSoftStartTime = document.getElementsByName("userSoftStartTime")[0].value;
+        obj.userSlowSpeedPercent = document.getElementsByName("userSlowSpeedPercent")[0].value;
+        obj.userRecoverSpeedPercent = document.getElementsByName("userRecoverSpeedPercent")[0].value;
+        obj.userCurrentCompensation = document.getElementsByName("userCurrentCompensation")[0].value;
+        buildArray();
+    }
+    // does conversions to build proper array for controller upload
+    function buildArray() {
+        // 0-1 are garbage arrays
+        controllerConfig[0] = 2;
+        controllerConfig[1] = 15;
+        controllerConfig[2] = calcPhaseCurrent(obj.userPhaseCurrent, obj.userModel);
+        controllerConfig[3] = calcRatedCurrent(obj.userRatedCurrent, obj.userModel);
+        controllerConfig[4] = obj.userHaltVoltage * 3.285;
+        controllerConfig[5] = obj.userTolerance * 3.285;
+        controllerConfig[6] = obj.userLimitSpeed * 0.96;
+        controllerConfig[7] = obj.userSpeedMode;
+        controllerConfig[8] = obj.userSpeed1 * 0.8;
+        controllerConfig[9] = obj.userSpeed2 * 0.8;
+        controllerConfig[10] = obj.userSpeed3 * 0.8;
+        controllerConfig[11] = obj.userBlockTime * 10;
+        controllerConfig[12] = obj.userAutoCruisingTime * 10;
+        controllerConfig[13] = obj.userSlipChargeMode;
+        controllerConfig[14] = obj.userIndicateMode;
+        controllerConfig[15] = obj.userEBSLevel;
+        controllerConfig[16] = obj.userConverseSpeed * 1.28;
+        controllerConfig[17] = obj.userEBSLimVoltage * 3.285;
+        controllerConfig[18] = obj.userGuardLevel;
+        controllerConfig[19] = obj.userBarProtect;
+        controllerConfig[20] = obj.userPedalAssistSensor;
+        controllerConfig[21] = obj.userp3Design;
+        controllerConfig[22] = obj.userDefaultSpeed;
+        controllerConfig[23] = obj.userSpeed4 * 0.8;
+        controllerConfig[24] = obj.userModel;
+        controllerConfig[25] = obj.userLimitCruise;
+        controllerConfig[26] = obj.userPedalAssistMaxSpeed * 1.28;
+        controllerConfig[27] = obj.userFluxWeaken;
+        controllerConfig[28] = obj.userFluxFineTune;
+        controllerConfig[29] = obj.userWeakPosition;
+        controllerConfig[30] = obj.userWeakTurnPoint;
+        var flag0 = 0;
+        var flag1 = 0;
+        var flag2 = 0;
+        var flag3 = 0;
+        var flag4 = obj.userSoftLVCDisable;
+        var flag5 = obj.userSoftStartEnable;
+        var flag6 = obj.userRegenBrakeEnable;
+        var flag7 = obj.userHallAngle;
+        controllerConfig[31] = createMask(flag7, flag6, flag5, flag4, flag3, flag2, flag1);
+        controllerConfig[32] = 0;
+        controllerConfig[33] = obj.userSoftLVCSpeed1 * 0.8;
+        controllerConfig[34] = obj.userSoftLVCSpeed2 * 0.8;
+        controllerConfig[35] = obj.userSoftLVCSpeed3 * 0.8;
+        controllerConfig[36] = obj.userSoftLVCSpeed4 * 0.8;
+        controllerConfig[37] = obj.userCurrentPerc1 * 1.28;
+        controllerConfig[38] = obj.userCurrentPerc2 * 1.28;
+        controllerConfig[39] = obj.userCurrentPerc3 * 1.28;
+        controllerConfig[40] = obj.userCurrentPerc4 * 1.28;
+        controllerConfig[41] = obj.userBatteryCurrentLimit * 13.18;
+        controllerConfig[42] = obj.userSoftStartTime;
+        controllerConfig[43] = obj.userSlowSpeedPercent * 0.8;
+        controllerConfig[44] = obj.userRecoverSpeedPercent * 1.28;
+        controllerConfig[45] = obj.userCurrentCompensation;
+        // checksum on offset 63
+        controllerConfig[63] = instanceCheck();
+        x.innerHTML = controllerConfig.join(" ");
+        flashUI();
+    }
+    // helper function for buildArray(), create bitflags
+    function createMask() {
+        var nMask = 0
+            , nFlag = 0
+            , nLen = arguments.length > 32 ? 32 : arguments.length;
+        for (nFlag; nFlag < nLen; nMask |= arguments[nFlag] << nFlag++);
+        return nMask;
+    }
+    // helper functions for buildArray, formulas dependant on controller model
+    function calcPhaseCurrent(value, model) {
+        if (model == "1") {
+            return value * 2.85;
+        }
+        if (model == "2") {
+            return value * 2.46;
+        }
+        if (model == "3") {
+            return value * 1.20;
+        }
+        if (model == "4") {
+            return value * 0.79;
+        }
+        if (model == "5") {
+            return value * 0.53
+        }
+        else {
+            return value * 1.20;
+        }
+    }
+
+    function calcRatedCurrent(value, model) {
+        if (model == "1") {
+            return value * 5.10;
+        }
+        if (model == "2") {
+            return value * 5.10;
+        }
+        if (model == "3") {
+            return value * 2.73;
+        }
+        if (model == "4") {
+            return value * 2.55;
+        }
+        if (model == "5") {
+            return value * 1.70
+        }
+        else {
+            return value * 2.73;
+        }
+    }
+    // helper function for buildArray, creating the XOR checksum
+    function instanceCheck() {
+        return controllerConfig[0] ^ controllerConfig[1] ^ controllerConfig[2] ^ controllerConfig[3] ^ controllerConfig[4] ^ controllerConfig[5] ^ controllerConfig[6] ^ controllerConfig[7] ^ controllerConfig[8] ^ controllerConfig[9] ^ controllerConfig[10] ^ controllerConfig[11] ^ controllerConfig[12] ^ controllerConfig[13] ^ controllerConfig[14] ^ controllerConfig[15] ^ controllerConfig[16] ^ controllerConfig[17] ^ controllerConfig[18] ^ controllerConfig[19] ^ controllerConfig[20] ^ controllerConfig[21] ^ controllerConfig[22] ^ controllerConfig[23] ^ controllerConfig[24] ^ controllerConfig[25] ^ controllerConfig[26] ^ controllerConfig[27] ^ controllerConfig[28] ^ controllerConfig[29] ^ controllerConfig[30] ^ controllerConfig[31] ^ controllerConfig[32] ^ controllerConfig[33] ^ controllerConfig[34] ^ controllerConfig[35] ^ controllerConfig[36] ^ controllerConfig[37] ^ controllerConfig[38] ^ controllerConfig[39] ^ controllerConfig[40] ^ controllerConfig[41] ^ controllerConfig[42] ^ controllerConfig[43] ^ controllerConfig[44] ^ controllerConfig[45] ^ controllerConfig[46] ^ controllerConfig[47] ^ controllerConfig[48] ^ controllerConfig[49] ^ controllerConfig[50] ^ controllerConfig[51] ^ controllerConfig[52] ^ controllerConfig[53] ^ controllerConfig[54] ^ controllerConfig[55] ^ controllerConfig[56] ^ controllerConfig[57] ^ controllerConfig[58] ^ controllerConfig[59] ^ controllerConfig[60] ^ controllerConfig[61] ^ controllerConfig[62];
+    }
+
+    function flashUI() {
+        var flashUIclass = document.getElementById("code").classList;
+        if (flashUIclass.contains("flash")) {
+            flashUIclass.remove("flash");
+        }
+        else {
+            flashUIclass.add("flash");
+        }
+        if (flashUIclass.contains("flash2")) {
+            flashUIclass.remove("flash2");
+        }
+        else {
+            flashUIclass.add("flash2");
+        }
+    }
+
+    function effectUI() {
+        var flashUIclass = document.getElementById("header").classList;
+        if (flashUIclass.contains("expand")) {
+            flashUIclass.remove("expand");
+        }
+        else {
+            flashUIclass.add("expand");
+        }
+    }
+</script>
+<style>
+    .flash {
+        -moz-animation: flash .3s ease-out;
+        -moz-animation-iteration-count: 1;
+        -webkit-animation: flash .3s ease-out;
+        -webkit-animation-iteration-count: 1;
+        -ms-animation: flash .3s ease-out;
+        -ms-animation-iteration-count: 1;
+        animation: flash .3s ease-out;
+        animation-iteration-count: 1;
+    }
+    
+    .flash2 {
+        -moz-animation: flash .5s ease-out;
+        -moz-animation-iteration-count: 1;
+        -webkit-animation: flash .5s ease-out;
+        -webkit-animation-iteration-count: 1;
+        -ms-animation: flash .5s ease-out;
+        -ms-animation-iteration-count: 1;
+        animation: flash .5s ease-out;
+        animation-iteration-count: 1;
+    }
+    
+    .dd {
+        -moz-animation: dd 1.5s ease-out;
+        -moz-animation-iteration-count: 1;
+        -webkit-animation: dd 1.5s ease-out;
+        -webkit-animation-iteration-count: 1;
+        -ms-animation: dd 1.5s ease-out;
+        -ms-animation-iteration-count: 1;
+        animation: dd 1.5s ease-out;
+        animation-iteration-count: 1;
+    }
+    
+    .expand {
+        -moz-animation: expand .5s ease-in;
+        -moz-animation-iteration-count: 1;
+        -webkit-animation: expand .5s ease-in;
+        -webkit-animation-iteration-count: 1;
+        -ms-animation: expand .5s ease-in;
+        -ms-animation-iteration-count: 1;
+        animation: expand .5s ease-in;
+        animation-iteration-count: 1;
+    }
+    
+    @-webkit-keyframes flash {
+        0% {
+            background-color: none;
+        }
+        30% {
+            background-color: #ffff00;
+        }
+        100% {
+            background-color: none;
+        }
+    }
+    
+    @-moz-keyframes flash {
+        0% {
+            background-color: none;
+        }
+        30% {
+            background-color: #ffff00;
+        }
+        100% {
+            background-color: none;
+        }
+    }
+    
+    @-ms-keyframes flash {
+        0% {
+            background-color: none;
+        }
+        30% {
+            background-color: #ffff00;
+        }
+        100% {
+            background-color: none;
+        }
+    }
+    
+    @-webkit-keyframes expand {
+        0% {}
+        30% {font-size: 20px;}
+        100% {
+        }
+    }
+    
+    @-moz-keyframes expand {
+        0% {}
+        30% {font-size: 20px;}
+        100% {
+        }
+    }
+    
+    @-ms-keyframes expand {
+        0% {}
+        30% {font-size: 20px;}
+        100% {
+        }
+    }
+    
+    @-webkit-keyframes dd {
+        0% {
+            background-color: #ffff00;
+            color: white;
+            font-size: 40px;
+            padding-bottom: 100px;
+        }
+        30% {
+            background-color: #ffff00;
+        }
+        100% {
+            background-color: none;
+        }
+    }
+    
+    @-moz-keyframes dd {
+        0% {
+            background-color: #ffff00;
+            padding-bottom: 100px;
+            color: white;
+            font-size: 40px;
+        }
+        30% {
+            background-color: #ffff00;
+        }
+        100% {
+            background-color: none;
+        }
+    }
+    
+    @-ms-keyframes dd {
+        0% {
+            background-color: #ffff00;
+            padding-bottom: 100px;
+            color: white;
+            font-size: 40px;
+        }
+        30% {
+            background-color: #ffff00;
+        }
+        100% {
+            background-color: none;
+        }
+    }
+</style>
+<html>
+<link rel="stylesheet" href="style.css">
+
+<body>
+    <div class="py2 dd" id="header" name="header">
+        <div class="txt--center">
+            <h1 class="h2">
+        wireFi<br>
+        <small class="small muted">A forward-thinking, embedded Infineon configuration tool.</small>
+      </h1>
+            <div class="my2"> <a href="#" onclick="effectUI();" class="btn--green">Flash</a> <a href="#" onclick="effectUI();" class="btn--gray py1">Import</a>
+                <br>
+            <a href="#" onclick="initForm();" class="btn">Fill with Default</a> <a href="#" onclick="exportForm();" class="btn">Export (desktop only)</a> </div>
+        </div>
+    </div>
+    <div name="settings" class="bg--dark-gray">
+        <section class="fnt--white measure p2">
+            <p class="h4"> # Core settings </p>
+            <div class="grd-row my1">
+                <div class="grd-row-col-1-6--md p1">
+                    <label class="small">Model</label>
+                    <select class="fnt--white bg--dark-gray" name="userModel" onchange="formChanged()" onkeyup="formChanged()">
+                        <option value="1">kh606</option>
+                        <option value="2">kh609</option>
+                        <option value="3">kh612</option>
+                        <option value="4">kh615</option>
+                        <option value="5">kh618</option>
+                    </select>
+                </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label class="small">Phase Current</label>
+                    <input class="fnt--white bg--dark-gray" onchange="formChanged()" onkeyup="formChanged()" type="number" name="userPhaseCurrent"> </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label class="small">Rated Current</label>
+                    <input class="fnt--white bg--dark-gray" onchange="formChanged()" onkeyup="formChanged()" type="number" name="userRatedCurrent"> </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label class="small">Cut-off Voltage</label>
+                    <input class="fnt--white bg--dark-gray" onchange="formChanged()" onkeyup="formChanged()" type="number" name="userHaltVoltage"> </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label class="small">Tolerance</label>
+                    <input class="fnt--white bg--dark-gray" onchange="formChanged()" onkeyup="formChanged()" type="number" name="userTolerance"> </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label class="small">Speed Limit</label>
+                    <input class="fnt--white bg--dark-gray" onchange="formChanged()" onkeyup="formChanged()" type="number" name="userLimitSpeed"> </div>
+            </div>
+            <div class="grd-row my1">
+                <div class="grd-row-col-1-6--md p1">
+                    <label class="small">(s)Limit Mode</label>
+                    <select class="fnt--white bg--dark-gray" name="userSpeedMode" onchange="formChanged()" onkeyup="formChanged()">
+                        <option value="0">switch 3spd </option>
+                        <option value="1">cycle 3spd</option>
+                        <option value="2">high switch 3spd</option>
+                        <option value="3">cycle 4spd</option>
+                    </select>
+                </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label class="small">Current Limit 1</label>
+                    <input class="fnt--white bg--dark-gray" type="number" onkeyup="formChanged()" onchange="formChanged()" name="userCurrentPerc1"> </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label class="small">Current Limit 2</label>
+                    <input class="fnt--white bg--dark-gray" type="number" onkeyup="formChanged()" onchange="formChanged()" name="userCurrentPerc2"> </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label class="small">Current Limit 3</label>
+                    <input class="fnt--white bg--dark-gray" type="number" onkeyup="formChanged()" onchange="formChanged()" name="userCurrentPerc3"> </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label class="small">Current Limit 4</label>
+                    <input class="fnt--white bg--dark-gray" type="number" onkeyup="formChanged()" onchange="formChanged()" name="userCurrentPerc4"> </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label class="small">(b)Current Max</label>
+                    <input class="fnt--white bg--dark-gray" type="number" onkeyup="formChanged()" onchange="formChanged()" name="userBatteryCurrentLimit"> </div>
+            </div>
+            <div class="grd-row my1">
+                <div class="grd-row-col-1-6--md p1">
+                    <label class="small">Recover MPH%</label>
+                    <input class="fnt--white bg--dark-gray" type="number" onkeyup="formChanged()" onchange="formChanged()" name="userRecoverSpeedPercent"> </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label class="small">Speed Limit 1</label>
+                    <input class="fnt--white bg--dark-gray" type="number" onkeyup="formChanged()" onchange="formChanged()" name="userSpeed1"> </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label class="small">Speed Limit 2</label>
+                    <input class="fnt--white bg--dark-gray" type="number" onkeyup="formChanged()" onchange="formChanged()" name="userSpeed2"> </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label class="small">Speed Limit 3</label>
+                    <input class="fnt--white bg--dark-gray" type="number" onkeyup="formChanged()" onchange="formChanged()" name="userSpeed3"> </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label class="small">Speed Limit 4</label>
+                    <input class="fnt--white bg--dark-gray" type="number" onkeyup="formChanged()" onchange="formChanged()" name="userSpeed4"> </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label class="small">Block Time</label>
+                    <input class="fnt--white bg--dark-gray" type="number" onkeyup="formChanged()" onchange="formChanged()" name="userBlockTime"> </div>
+            </div>
+            <div class="grd-row my1">
+                <div class="grd-row-col-1-6--md p1">
+                    <label for="userAutoCruisingTime" class="small">Auto-cruise time</label>
+                    <input type="text" name="userAutoCruisingTime" class="fnt--white bg--dark-gray" onkeyup="formChanged()" onchange="formChanged()" /> </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label for="userSlipChargeMode" class="small">"Slip-charge"</label>
+                    <select name="userSlipChargeMode" onkeyup="formChanged()" class="fnt--white bg--dark-gray" onchange="formChanged()">
+                        <option value="0">enable</option>
+                        <option value="1">disable</option>
+                    </select>
+                </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label for="userSoftLVCSpeed1" class="small">SoftLVC 1</label>
+                    <input type="number" name="userSoftLVCSpeed1" onkeyup="formChanged()" class="fnt--white bg--dark-gray" onchange="formChanged()" /> </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label for="userSoftLVCSpeed2" class="small">SoftLVC 2</label>
+                    <input type="number" name="userSoftLVCSpeed2" onkeyup="formChanged()" class="fnt--white bg--dark-gray" onchange="formChanged()" /> </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label for="userSoftLVCSpeed3" class="small">SoftLVC 3</label>
+                    <input type="number" name="userSoftLVCSpeed3" onkeyup="formChanged()" class="fnt--white bg--dark-gray" onchange="formChanged()" /> </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label for="userSoftLVCSpeed4" class="small">SoftLVC 4</label>
+                    <input type="number" name="userSoftLVCSpeed4" onkeyup="formChanged()" class="fnt--white bg--dark-gray" onchange="formChanged()" /> </div>
+            </div>
+            <div class="grd-row my1">
+                <div class="grd-row-col-1-6--md p1">
+                    <label for="userSoftStartTime" class="small">Soft start time</label>
+                    <input type="number" name="userSoftStartTime" class="fnt--white bg--dark-gray" onkeyup="formChanged()" onchange="formChanged()" /> </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label for="userSlowSpeedPercent" class="small">"Slow" sped %</label>
+                    <input type="text" name="userSlowSpeedPercent" class="fnt--white bg--dark-gray" onkeyup="formChanged()" onchange="formChanged()" /> </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label for="userHallAngle" class="small">Hall angle</label>
+                    <select name="userHallAngle" onkeyup="formChanged()" class="fnt--white bg--dark-gray" onchange="formChanged()">
+                        <option value="1">120°</option>
+                        <option value="0">60°</option>
+                    </select>
+                </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label for="userIndicateMode" class="small">Indicate mode</label>
+                    <select name="userIndicateMode" class="fnt--white bg--dark-gray" onkeyup="formChanged()" onchange="formChanged()">
+                        <option value="0">common vcc</option>
+                        <option value="1">common gnd</option>
+                    </select>
+                </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label for="userEBSLevel" class="small">EBS mode</label>
+                    <select name="userEBSLevel" class="fnt--white bg--dark-gray" onkeyup="formChanged()" onchange="formChanged()">
+                        <option value="0">low</option>
+                        <option value="1">medium</option>
+                        <option value="2">high</option>
+                        <option value="255">unlimited</option>
+                    </select>
+                </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label for="userConverseSpeed" class="small">Reverse speed</label>
+                    <input type="number" class="fnt--white bg--dark-gray" name="userConverseSpeed" onkeyup="formChanged()" onchange="formChanged()" /> </div>
+            </div>
+            <div class="grd-row my1">
+                <div class="grd-row-col-1-6--md p1">
+                    <label for="userGuardLevel" class="small">Guard Level</label>
+                    <select name="userGuardLevel" class="fnt--white bg--dark-gray" onkeyup="formChanged()" onchange="formChanged()">
+                        <option value="0">low</option>
+                        <option value="1">high</option>
+                    </select>
+                </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label for="userBarProtect" class="small">Throttle Protect</label>
+                    <select name="userBarProtect" class="fnt--white bg--dark-gray" onkeyup="formChanged()" onchange="formChanged()">
+                        <option value="0">disable</option>
+                        <option value="1">enable</option>
+                    </select>
+                </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label for="userPedalAssistSensor" class="small">Pedal assist</label>
+                    <input type="number" name="userPedalAssistSensor" class="fnt--white bg--dark-gray" onkeyup="formChanged()" onchange="formChanged()" /> </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label for="userRegenBrakeEnable" class="small">Regen-brake</label>
+                    <select name="userRegenBrakeEnable" class="fnt--white bg--dark-gray" onkeyup="formChanged()" onchange="formChanged()">
+                        <option value="0">disabled</option>
+                        <option value="1">enabled</option>
+                    </select>
+                </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label for="userSoftStartEnable" class="small">Soft start</label>
+                    <select name="userSoftStartEnable" class="fnt--white bg--dark-gray" onkeyup="formChanged()" onchange="formChanged()">
+                        <option value="0">disabled</option>
+                        <option value="1">enabled</option>
+                    </select>
+                </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label for="userSoftLVCDisable" class="small">SoftLVC</label>
+                    <select name="userSoftLVCDisable" class="fnt--white bg--dark-gray" onkeyup="formChanged()" onchange="formChanged()">
+                        <option value="1">disabled</option>
+                        <option value="0">enabled</option>
+                    </select>
+                </div>
+            </div>
+            <div class="grd-row my1">
+                <div class="grd-row-col-1-6--md p1">
+                    <label for="userCurrentCompensation" class="small">Current Comp</label>
+                    <input type="number" name="userCurrentCompensation" class="fnt--white bg--dark-gray" onkeyup="formChanged()" onchange="formChanged()" /> </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label for="userp3Design" class="small">Pedal start</label>
+                    <input type="number" name="userp3Design" class="fnt--white bg--dark-gray" onkeyup="formChanged()" onchange="formChanged()" /> </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label for="userDefaultSpeed" class="small">Default speed</label>
+                    <select name="userDefaultSpeed" class="fnt--white bg--dark-gray" onkeyup="formChanged()" onchange="formChanged()">
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label for="userEBSLimVoltage" class="small">EBSv limit</label>
+                    <input type="number" name="userEBSLimVoltage" class="fnt--white bg--dark-gray" onkeyup="formChanged()" onchange="formChanged()" /> </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label for="userLimitCruise" class="small">Cruise limit</label>
+                    <select name="userLimitCruise" class="fnt--white bg--dark-gray" onkeyup="formChanged()" onchange="formChanged()">
+                        <option value="0">disabled</option>
+                        <option value="1">enabled</option>
+                    </select>
+                </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label for="userPedalAssistMaxSpeed" class="small">PA max speed</label>
+                    <input type="number" name="userPedalAssistMaxSpeed" class="fnt--white bg--dark-gray" onkeyup="formChanged()" onchange="formChanged()" /> </div>
+            </div>
+            <div class="grd-row my1">
+                <div class="grd-row-col-1-6--md p1">
+                    <label for="userFluxWeaken" class="small">flxWk</label>
+                    <input type="number" name="userFluxWeaken" class="fnt--white bg--dark-gray" onkeyup="formChanged()" onchange="formChanged()" /> </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label for="userFluxFineTune" class="small">flxWk fine</label>
+                    <input type="number" name="userFluxFineTune" class="fnt--white bg--dark-gray" onkeyup="formChanged()" onchange="formChanged()" /> </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label for="userWeakPosition" class="small">flxWk position</label>
+                    <input type="number" name="userWeakPosition" class="fnt--white bg--dark-gray" onkeyup="formChanged()" onchange="formChanged()" /> </div>
+                <div class="grd-row-col-1-6--md p1">
+                    <label for="userWeakTurnPoint" class="small">FlxWk turn-point</label>
+                    <input type="number" name="userWeakTurnPoint" class="fnt--white bg--dark-gray" onkeyup="formChanged()" onchange="formChanged()" /> </div>
+            </div>
+        </section>
+        <div class="py2 bg--off-white" id="code">
+            <div class="grd p2 small">
+                <div class="txt--center"> <code><div id="x">Preview array will appear here.</div></code> </div>
+            </div>
+        </div>
+        <div class="py2 bg--green" id="grid">
+            <footer class="txt--center p0">
+                <p class="medium p1 fnt--white"> Crafted with ♡ in California by <a href="https://alec.work" class="fnt--white">Alec Armbruster</a> </p>
+            </footer>
+        </div>
+</body>
+
+</html>
